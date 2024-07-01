@@ -1,9 +1,11 @@
 package com.example.SpringTutorial.controller;
 
+import com.example.SpringTutorial.dto_converters.UserDtoConverter;
 import com.example.SpringTutorial.entity.UserEntity;
 import com.example.SpringTutorial.request.UserLoginDto;
 import com.example.SpringTutorial.request.UserRegisterDto;
 import com.example.SpringTutorial.response.LoginResponse;
+import com.example.SpringTutorial.response.UserResponse;
 import com.example.SpringTutorial.service.AuthenticationService;
 import com.example.SpringTutorial.service.JwtService;
 import org.apache.juli.logging.Log;
@@ -25,10 +27,14 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;
     
+    @Autowired
+    private UserDtoConverter converter;
+    
+    
     @PostMapping("/register")
-    public ResponseEntity<UserEntity> register(@RequestBody UserRegisterDto registerDto) {
+    public ResponseEntity<UserResponse> register(@RequestBody UserRegisterDto registerDto) {
         UserEntity user = authenticationService.register(registerDto);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        return new ResponseEntity<>(converter.toDto(user), HttpStatus.CREATED);
     }
     
     @PostMapping("/login")

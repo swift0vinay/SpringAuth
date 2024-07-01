@@ -1,13 +1,11 @@
 package com.example.SpringTutorial.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -19,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 public class UserEntity implements UserDetails {
     
     @Id
@@ -47,7 +46,8 @@ public class UserEntity implements UserDetails {
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getName().toString());
+        return List.of(authority);
     }
     
     @Override
@@ -79,5 +79,10 @@ public class UserEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+    
+    
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+    private Role role;
     
 }
